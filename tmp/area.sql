@@ -4128,6 +4128,8 @@ INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('711745', '田尾', '田尾', '', '711700', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('711738', '永靖', '永靖', '', '711700', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('711736', '员林', '員林', '', '711700', '0', '', '', '');
+INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('1', '中国', '中國', 'China', '0', '0', '', '', '');
+INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('125', '马来西亚', '馬來西亞', 'Malaysia', '0', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('190', '新加坡', '新加坡', 'Singapore', '0', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('16', '澳大利亚', '澳大利亞', 'Australia', '0', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('150', '新西兰', '新西蘭', 'New Zealand', '0', '0', '', '', '');

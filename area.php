@@ -326,6 +326,29 @@ class area
     {
         $html = '';
         if ($this->other_countries) {
+            $add                     = [];
+            $add['id']               = 1;//ID
+            $add['name']             = '中国';//名称
+            $add['name_traditional'] = '中國';//繁体名称
+            $add['name_en']          = 'China';//英文
+            $add['parent_id']        = 0;
+            $add['type']             = '';
+            $add['type_name']        = '';//类别名称
+            $add['other_name']       = '';//
+            $add['name_format']      = '';//格式化全称
+            $this->province_city[]   = $add;
+            $add                     = [];
+            $add['id']               = 125;//ID
+            $add['name']             = '马来西亚';//名称
+            $add['name_traditional'] = '馬來西亞';//繁体名称
+            $add['name_en']          = 'Malaysia';//英文
+            $add['parent_id']        = 0;
+            $add['type']             = '';
+            $add['type_name']        = '';//类别名称
+            $add['other_name']       = '';//
+            $add['name_format']      = '';//格式化全称
+            $this->province_city[]   = $add;
+
             foreach ($this->other_countries as $key => $val) {
                 //            $html .= "$key\t{$val[0]}\t{$val[1]}\t$val[2]\n";
                 $add                     = [];
