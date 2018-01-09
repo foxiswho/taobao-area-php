@@ -7,6 +7,7 @@ class area
     private $is_country = true;
     private $make_csv   = false;
     private $make_sql   = true;
+    private $ext_data   = [];
     //省
     private $province = [];
     //市
@@ -23,6 +24,14 @@ class area
     private $province_city = [];
     //扩展
     private $province_city_ext = [];
+
+    /**临时目录
+     * @return string
+     */
+    private function getTmpPath()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
+    }
 
     /**传入 URL
      * @param string $url
@@ -45,10 +54,16 @@ class area
      */
     private function downLoadUrl()
     {
+        $path = $this->getTmpPath();
+        if (!is_dir($path)) {
+            if (!mkdir($path, 0777, true)) {
+                exit("目录创建失败，没有此权限");
+            }
+        }
         //获取远程文件内存
         $string = file_get_contents($this->url);
         //写入存储文件
-        file_put_contents($this->file_name, $string);
+        file_put_contents($path . $this->file_name, $string);
     }
 
     /** 生成 csv文件
@@ -67,12 +82,20 @@ class area
         $this->make_sql = $make_sql ? true : false;
     }
 
+    /**传入扩展数据
+     * @param array $ext_data
+     */
+    public function setExtData($ext_data)
+    {
+        $this->ext_data = $ext_data;
+    }
+
     /**
      * 格式化 获取内容
      */
     private function getJsContent()
     {
-        $string = file_get_contents($this->file_name);
+        $string = file_get_contents($this->getTmpPath() . $this->file_name);
         $area   = explode("\n", $string);
         //        echo $area[0];
         //获得 除香港澳门台湾的省市区
@@ -333,7 +356,7 @@ class area
             $add['id']               = $val[0];//ID
             $add['name']             = $val[1][0];//名称
             $add['name_traditional'] = $val[1][1];//繁体名称
-            $add['name_en'] = $val[1][2];//英文
+            $add['name_en']          = $val[1][2];//英文
             $add['parent_id']        = $val[2];
             $add['type']             = 0;
             $add['type_name']        = '';//类别名称
@@ -388,12 +411,31 @@ class area
         }
         //
         //写入存储文件
-        file_put_contents('area.csv', implode("\n", $sql));
+        file_put_contents($this->getTmpPath() . 'area.csv', implode("\n", $sql));
     }
 
     private function makeSql()
     {
-        $sql = [];
+        $sql   = [];
+        $sql[] = <<<EOF
+CREATE TABLE `area_ext` (
+  `ext_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `id` INT(11) DEFAULT '0' COMMENT 'ID',
+  `name` CHAR(50) DEFAULT '' COMMENT '名称',
+  `name_traditional` VARCHAR(50) DEFAULT '' COMMENT '繁体名称',
+  `name_en` VARCHAR(100) DEFAULT '' COMMENT '英文名称',
+  `parent_id` INT(11) DEFAULT '0' COMMENT '上级栏目ID',
+  `type` TINYINT(4) DEFAULT '0' COMMENT '类别;0默认;1又名;2;3属于;11已合并到;12已更名为',
+  `sort` INT(11) DEFAULT '0' COMMENT '排序',
+  `type_name` VARCHAR(50) DEFAULT '' COMMENT '类别名称',
+  `other_name` VARCHAR(50) DEFAULT '' COMMENT '根据类别名称填写',
+  `name_format` CHAR(80) DEFAULT NULL COMMENT '格式化全称',
+  PRIMARY KEY (`ext_id`),
+  KEY `id` (`id`,`parent_id`,`sort`) USING BTREE,
+  KEY `name_format` (`name_format`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='地区扩展表';
+
+EOF;
         foreach ($this->province_city as $val) {
             $val['id']               = (int)$val['id'];
             $val['parent_id']        = (int)$val['parent_id'];
@@ -401,21 +443,79 @@ class area
             $val['name']             = trim($val['name']);
             $val['name_traditional'] = trim($val['name_traditional']);
             $val['type_name']        = trim($val['type_name']);
-            $val['name_format']      = trim($val['name_format']);
-            $sql[]                   = "INSERT INTO `area` (`id`,`name`,`name_traditional`,`parent_id`,`type`,`type_name`)VALUE ('{$val['id']}', '{$val['name']}', '{$val['name_traditional']}', '{$val['parent_id']}', '{$val['type']}', '{$val['type_name']}', '{$val['name_format']}');";
+            $val['other_name']       = trim($val['other_name']);
+            $val['name_en']          = isset($val['name_en']) ? trim($val['name_en']) : '';
+            //类别为 0 没有别名
+            if ($val['type'] > 0) {
+                $val['name_format'] = $val['name'] . "(" . $val['type_name'] . $val['other_name'] . ")";
+            } else {
+                $val['name_format'] = '';
+            }
+            $sql[] = "INSERT INTO `area_ext` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('{$val['id']}', '{$val['name']}', '{$val['name_traditional']}', '{$val['name_en']}', '{$val['parent_id']}', '{$val['type']}', '{$val['type_name']}', '{$val['other_name']}', '{$val['name_format']}');";
+        }
+        //扩展
+        foreach ($this->province_city_ext as $val) {
+            $val['id']               = (int)$val['id'];
+            $val['parent_id']        = (int)$val['parent_id'];
+            $val['type']             = (int)$val['type'];
+            $val['name']             = trim($val['name']);
+            $val['name_traditional'] = trim($val['name_traditional']);
+            $val['type_name']        = trim($val['type_name']);
+            $val['other_name']       = trim($val['other_name']);
+            $val['name_en']          = isset($val['name_en']) ? trim($val['name_en']) : '';
+            //类别为 0 没有别名
+            if ($val['type'] > 0) {
+                $val['name_format'] = $val['name'] . "(" . $val['type_name'] . $val['other_name'] . ")";
+            } else {
+                $val['name_format'] = '';
+            }
+            $sql[] = "INSERT INTO `area_ext` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('{$val['id']}', '{$val['name']}', '{$val['name_traditional']}', '{$val['name_en']}', '{$val['parent_id']}', '{$val['type']}', '{$val['type_name']}', '{$val['other_name']}', '{$val['name_format']}');";
+        }
+        //写入存储文件
+        file_put_contents($this->getTmpPath() . 'area.sql', implode("\n", $sql));
+    }
+
+    /**
+     * 处理扩展数据
+     */
+    private function processExtData()
+    {
+        if ($this->ext_data) {
+            $tmp = explode("\n", $this->ext_data);
+            foreach ($tmp as $val) {
+                $item = explode("\t", $val);
+                if (isset($item[0])) {
+                    if ($item[0]) {
+                        $add                     = [];
+                        $add['id']               = $item[0];//ID
+                        $add['name']             = $item[1];//名称
+                        $add['name_traditional'] = '';//繁体名称
+                        $add['name_en']          = '';//英文
+                        $add['parent_id']        = $item[4];
+                        $add['type']             = 0;
+                        $add['type_name']        = '';//类别名称
+                        $add['other_name']       = '';//别称
+                        $add['name_format']      = '';//格式化全称
+                        $this->province_city[]   = $add;
+                    }
+                }
+
+            }
         }
     }
 
     public function process()
     {
         //下载文件
-        //$this->downLoadUrl();
+        $this->downLoadUrl();
         //处理内容
         $this->getJsContent();
         //省
         $this->processProvince();
         //市区
         $this->processArea();
+        //处理 扩展数据
+        $this->processExtData();
         //处理 香港 澳门
         $this->processGangAo();
         //台湾
@@ -430,5 +530,7 @@ class area
         if ($this->make_sql) {
             $this->makeSql();
         }
+        echo "make SUCCESS";
+        return true;
     }
 }
