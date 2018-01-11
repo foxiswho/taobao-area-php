@@ -3734,7 +3734,7 @@ INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('820000', '澳门', '澳門', '', '1', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('820100', '澳门半岛', '澳門半島', '', '820000', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('820200', '离岛', '離島', '', '820000', '0', '', '', '');
-INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('710000', '台湾', '臺灣', '', '2', '0', '', '', '');
+INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('710000', '台湾', '臺灣', '', '1', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('712800', '连江', '連江', '', '710000', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('712806', '北竿', '北竿', '', '712800', '0', '', '', '');
 INSERT INTO `area` (`id`,`name`,`name_traditional`,`name_en`,`parent_id`,`type`,`type_name`,`other_name`,`name_format`)VALUE ('712808', '东引', '東引', '', '712800', '0', '', '', '');

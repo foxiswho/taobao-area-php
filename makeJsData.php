@@ -42,10 +42,14 @@ class makeJsData
         if ($this->city) {
             $data = [];
             foreach ($this->city as $item) {
+                //不需要国家
+                if($item['parent_id']==1){
+                    continue;
+                }
                 $add                        = [];
-                $add[]                      = $item['id'];
+                $add[]                      = (int)$item['id'];
                 $add[]                      = $item['name'];
-                $add[]                      = $item['parent_id'];
+                $add[]                      = (int)$item['parent_id'];
                 $add[]                      = (int)$item['type'];
                 $add[]                      = trim($item['type_name']);
                 $add[]                      = trim($item['other_name']);
@@ -53,10 +57,14 @@ class makeJsData
             }
             if ($this->city_ext) {
                 foreach ($this->city_ext as $item) {
+                    //不需要国家
+                    if($item['parent_id']==1){
+                        continue;
+                    }
                     $add                        = [];
-                    $add[]                      = $item['id'];
+                    $add[]                      = (int)$item['id'];
                     $add[]                      = $item['name'];
-                    $add[]                      = $item['parent_id'];
+                    $add[]                      = (int)$item['parent_id'];
                     $add[]                      = (int)$item['type'];
                     $add[]                      = trim($item['type_name']);
                     $add[]                      = trim($item['other_name']);

@@ -323,7 +323,11 @@ class area
             $add['type_name']        = '';//类别名称
             $add['other_name']       = '';//别称
             $add['name_format']      = '';//格式化全称
-            $this->province_city[]   = $add;
+            if ($add['name'] == '台湾') {
+                //重复了，直接PASS
+                $add['parent_id'] = 1;
+            }
+            $this->province_city[] = $add;
         }
         //        echo $html;
     }
@@ -559,9 +563,9 @@ EOF;
         //处理内容
         $this->getJsContent();
         //生成js 数据
-        if($this->make_js_data){
+        if ($this->make_js_data) {
             //省数据不需要，已自带
-        }else{
+        } else {
             //省
             $this->processProvince();
         }
@@ -584,9 +588,9 @@ EOF;
             $this->makeSql();
         }
         //生成js 数据
-        if($this->make_js_data){
-            include_once  "makeJsData.php";
-            $makeJs=new makeJsData();
+        if ($this->make_js_data) {
+            include_once "makeJsData.php";
+            $makeJs = new makeJsData();
             $makeJs->setPath($this->getTmpPath());
             $makeJs->setCity($this->province_city);
             $makeJs->setCityExt($this->province_city_ext);
