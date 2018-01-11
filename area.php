@@ -2,12 +2,13 @@
 
 class area
 {
-    private $url        = '';
-    private $file_name  = 'taobao-area.js';
-    private $is_country = true;
-    private $make_csv   = false;
-    private $make_sql   = true;
-    private $ext_data   = [];
+    private $url          = '';
+    private $file_name    = 'taobao-area.js';
+    private $is_country   = true;
+    private $make_csv     = false;
+    private $make_sql     = true;
+    private $make_js_data = false;
+    private $ext_data     = [];
     //省
     private $province = [];
     //市
@@ -28,7 +29,7 @@ class area
     /**临时目录
      * @return string
      */
-    private function getTmpPath()
+    public function getTmpPath()
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
     }
@@ -88,6 +89,14 @@ class area
     public function setExtData($ext_data)
     {
         $this->ext_data = $ext_data;
+    }
+
+    /**
+     * @param bool $make_js_data
+     */
+    public function setMakeJsData($make_js_data)
+    {
+        $this->make_js_data = $make_js_data ? true : false;
     }
 
     /**
@@ -348,7 +357,6 @@ class area
             $add['other_name']       = '';//
             $add['name_format']      = '';//格式化全称
             $this->province_city[]   = $add;
-
             foreach ($this->other_countries as $key => $val) {
                 //            $html .= "$key\t{$val[0]}\t{$val[1]}\t$val[2]\n";
                 $add                     = [];
@@ -550,8 +558,13 @@ EOF;
         $this->downLoadUrl();
         //处理内容
         $this->getJsContent();
-        //省
-        $this->processProvince();
+        //生成js 数据
+        if($this->make_js_data){
+            //省数据不需要，已自带
+        }else{
+            //省
+            $this->processProvince();
+        }
         //市区
         $this->processArea();
         //处理 扩展数据
@@ -570,7 +583,16 @@ EOF;
         if ($this->make_sql) {
             $this->makeSql();
         }
-        echo "make SUCCESS";
+        //生成js 数据
+        if($this->make_js_data){
+            include_once  "makeJsData.php";
+            $makeJs=new makeJsData();
+            $makeJs->setPath($this->getTmpPath());
+            $makeJs->setCity($this->province_city);
+            $makeJs->setCityExt($this->province_city_ext);
+            $makeJs->process();
+        }
+        echo "make SUCCESS \n";
         return true;
     }
 }
